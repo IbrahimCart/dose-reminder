@@ -35,6 +35,13 @@ My mom, who takes about 12 medications twice a day, 12 hours apart (8 am and 8 p
 
 Ibrahim only (I asked my professor whether this submission can be done alone; the answer is recorded in `LOG.md`). The person I built it for is my mom, who is outside the team. The earlier attempt for another group (a Discord bot pull request) is in [`IbrahimCart/artifact-4-discord-bot-pr`](https://github.com/IbrahimCart/artifact-4-discord-bot-pr).
 
+## How collisions are avoided
+
+- **One owner:** Ibrahim owns all the code, the log and the card. If a partner joins, we split by folder first: one person owns `DoseCore/` (logic and tests), the other owns `App/` (screens and notifications), and nobody edits the other's folder without asking.
+- **Branches:** each person works on their own branch and opens a pull request into `main`; the other person reviews and merges. Nobody pushes straight to `main` once there are two of us.
+- **Agents:** each person's agent follows [`CLAUDE.md`](CLAUDE.md), which repeats the plan, so agents that never talk to each other work from the same one.
+- **The person it is for** (my mom) does not edit the code. Her feedback goes into `LOG.md` and I change the app.
+
 ## Definition of done
 
 1. The app runs on her iPhone and she has used it to record real doses. *Not done yet.*
