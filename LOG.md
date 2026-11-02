@@ -48,6 +48,13 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **What it produced:** The public repository `IbrahimCart/dose-reminder` with everything above, and an updated Artifact 4 card on my portfolio (title, link to this repository, a progress summary). The old notes repository now points here. It then checked the card against the assignment page: the card and log are in place, but the plan has no section on how collisions are avoided, `CLAUDE.md` does not state the plan itself, and the team is one person.
 - **What I changed and why:** I left her diagnosis and anything medical off the public card, because she asked that her medications not be named and I want the public pages to say as little as possible. The card says plainly that the screens have not been run yet. I decided to add the collision plan and the team plan to `CLAUDE.md` before Nov 8. *Professor's reply about working alone: pending.*
 
+### Step 6: Install Xcode and build the app
+- **Date:** 2026-11-02
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** "Okay lets continue with the app", then "can you do whats needed yourself? just ask me for stuff you cant access".
+- **What it produced:** With Xcode 27.2 installed and its license accepted, it installed `xcodegen`, generated the Xcode project, and built the app for a real iPhone (no signing) and for the simulator. Both builds succeeded. The first build warned that the app did not declare iPad orientations, so it set the app to iPhone only. It also downloaded the iOS 27.2 simulator (8.3 GB).
+- **What I changed and why:** Starting the simulator used up almost all of my Mac's free space (it fell to under 500 MB), so I stopped it. I have therefore **not yet seen the app run**, and the README says so. I need to free more disk space before trying again.
+
 ## Next
 
 - Install Xcode, run the app in the simulator, fix whatever breaks, and add real screenshots.

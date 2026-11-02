@@ -50,7 +50,7 @@ Ibrahim only (I asked my professor whether this submission can be done alone; th
 
 ## Status
 
-The logic and the screens are written. The logic is tested; the screens pass a type check but have **not been run on a phone or in the simulator yet**, because Xcode is not installed on my Mac yet.
+The logic is tested (12 unit tests pass) and the app **builds** for both the iPhone and the iOS simulator with Xcode 27.2. I have **not yet seen it run**: the simulator would not finish starting because my Mac ran out of disk space, and I have not installed it on a phone yet. Nothing about how it looks or behaves on a device is verified.
 
 ## Running it
 
