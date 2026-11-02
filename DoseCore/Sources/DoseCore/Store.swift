@@ -1,6 +1,6 @@
 import Foundation
 
-/// Saves the log as a JSON file on the device. Nothing leaves the phone.
+/// Saves the log as a JSON file on the device. Nothing leaves the phone. A file saved by an older version that did not have custom reminders cannot be read and starts fresh.
 public struct JSONFileStore {
     public let url: URL
 

@@ -15,6 +15,8 @@ struct DoseReminderApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .tint(.doseGreen)
+                .preferredColorScheme(.light)
                 .environmentObject(model)
                 .onAppear { notificationDelegate.model = model }
                 .onChange(of: scenePhase) { _, phase in
@@ -25,11 +27,16 @@ struct DoseReminderApp: App {
 }
 
 struct RootView: View {
+    @EnvironmentObject var model: AppModel
+
     var body: some View {
         TabView {
             HomeView().tabItem { Label("Today", systemImage: "pills") }
             HistoryView().tabItem { Label("History", systemImage: "list.bullet") }
             SettingsView().tabItem { Label("Settings", systemImage: "gearshape") }
+        }
+        .overlay {
+            if let id = model.confettiID { ConfettiView().id(id) }
         }
     }
 }

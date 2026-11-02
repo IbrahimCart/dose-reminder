@@ -1,26 +1,28 @@
-# Doses: a simple twice-a-day reminder app
+# Doses: a simple customizable reminder app
 
 TCSS 490 (Generative AI and Software Development, UW Autumn 2026), Artifact 4: *For Someone Else*, by Ibrahim Cartan.
 
 ## Who it is for
 
-My mom, who takes about 12 medications twice a day, 12 hours apart (8 am and 8 pm), and relies on phone alarms and a pillbox. I asked her what she needs before building anything. Her answers are in [`LOG.md`](LOG.md), and the design follows them.
+I built it for my mom, who takes about 12 medications twice a day, 12 hours apart (8 am and 8 pm), and relies on phone alarms and a pillbox. I asked her what she needs before building anything. Her answers are in [`LOG.md`](LOG.md), and the design follows them.
+
+On 2026-11-02 I made it general so anyone can use it: a person adds their own reminders, names them, sets the times and switches them on or off. It starts with the two reminders my mom needs (Morning 8:00 and Evening 20:00), so her version is simply the default.
 
 | What she told me | What the app does |
 |---|---|
-| Uses alarms at 8 am and 8 pm | Two daily doses; the 12 pills are one "Morning" or "Evening" dose with one tap |
+| Uses alarms at 8 am and 8 pm | Starts with two reminders, "Morning" and "Evening"; the 12 pills are one dose with one tap |
 | Forgets when busy; can't tell if she already took it | The Today screen says "Taken at 8:04" or "Not yet" in large text |
 | Wants one gentle reminder, then something firmer if she misses it | One reminder at dose time; if she has not tapped "I took it", reminders repeat until she does |
 | Wants to see the last time she missed a dose | "Last missed or late dose" is on the home screen |
-| Wants a record for her neurologist | History list and a share button that makes a plain-text summary |
+| Wants a record for her neurologist | History list and a share button that makes a plain-text summary (and an optional notes list) |
 | Only on her phone, nobody else told | No accounts, no server; data is a file on the phone |
-| Does not want her medications named | The app never asks for or stores a medication name |
-| Health app is confusing; wants it straightforward | Three tabs, big buttons, almost no settings |
+| Does not want her medications named | The app never asks for a medication name or suggests one. Each reminder has a label the person types ("Morning" and "Evening" by default), kept only on the phone |
+| Health app is confusing; wants it straightforward | Three tabs, big buttons, a short Settings list |
 
 ## How it is built
 
-- **`DoseCore/`**: a Swift package with all the logic and no screen code: the schedule, whether a dose is upcoming, due, taken, late or missed, the reminder plan, the neurologist summary and saving to a file. It has 12 unit tests (`cd DoseCore && swift test`).
-- **`App/`**: the SwiftUI screens (Today, History, Settings) and the notification code. Reminders are local notifications, so they work offline and without a server. A notification has an "I took it" button, so she can record a dose without opening the app.
+- **`DoseCore/`**: a Swift package with all the logic and no screen code: the schedule, whether a dose is upcoming, due, taken, late or missed, the reminder plan, the plain-text summary and saving to a file. It has 17 unit tests (`cd DoseCore && swift test`).
+- **`App/`**: the SwiftUI screens (Today, History, Settings, and a small editor for one reminder) and the notification code. Reminders are local notifications, so they work offline and without a server. A notification has an "I took it" button, so she can record a dose without opening the app.
 - **`project.yml`**: XcodeGen description of the Xcode project (`brew install xcodegen && xcodegen`).
 
 **A dose counts as** *taken* if recorded within 2 hours of its time, *late* if recorded after that, and *missed* if nothing is recorded. The 2-hour window comes from her saying she feels symptoms within about an hour or two of a missed dose; it can be changed in Settings.
@@ -28,7 +30,8 @@ My mom, who takes about 12 medications twice a day, 12 hours apart (8 am and 8 p
 ## Safety and privacy
 
 - This is a reminder and a log. It never suggests or changes a dose, and it does not replace her doctor's or pharmacist's instructions.
-- Only times are stored, on the phone. This repository contains no medication names, and the demo data is made up.
+- Only reminder labels, times and notes the person types are stored, and only on the phone. The app never suggests a label, and this repository contains no medication names; the demo data is made up and generic.
+- A label the person types also appears in the reminder on the lock screen, and Settings says so.
 - If reminders are switched off in iPhone Settings, the Today screen says so.
 
 ## Team and ownership
@@ -48,9 +51,17 @@ Ibrahim only (I asked my professor whether this submission can be done alone; th
 2. I watched her use it and wrote down where she got stuck and what I changed. *Not done yet.*
 3. `LOG.md` is current and my portfolio card links here with a reflection. *In progress.*
 
+## Customizing reminders
+
+In Settings a person can add a reminder (up to 8, because iOS keeps at most 64 pending notifications), rename it, change its time, switch it off, or swipe to delete it. Each reminder has its own card on Today and its own rows in History. Renaming a reminder keeps its history; deleting one keeps what was already recorded under its old name. Changing a time or adding or removing a reminder restarts "missed" tracking from that moment, so the app never invents missed doses from the past.
+
+An older save file (from before custom reminders) cannot be read, so the first launch after updating starts fresh.
+
 ## Status
 
-The logic is tested (12 unit tests pass) and the app **builds** for both the iPhone and the iOS simulator with Xcode 27.2. I have **not yet seen it run**: the simulator would not finish starting because my Mac ran out of disk space, and I have not installed it on a phone yet. Nothing about how it looks or behaves on a device is verified.
+The logic is tested (17 unit tests pass) and the app builds with Xcode 27.2. On 2026-11-02 I installed it on my own iPhone 17 Pro Max and confirmed the Today screen shows the two default reminders. The iOS simulator never finished starting on my Mac, so there are no simulator runs.
+
+**Not yet verified on a device:** adding and editing reminders in Settings, whether notifications fire at the right times, and the "I took it" button on a notification. My mom has not used it yet.
 
 ## Running it
 

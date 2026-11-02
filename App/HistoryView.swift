@@ -10,16 +10,17 @@ struct HistoryView: View {
             List {
                 Section {
                     ShareLink(item: model.report) {
-                        Label("Share record for my neurologist", systemImage: "square.and.arrow.up")
+                        Label("Share my record", systemImage: "square.and.arrow.up")
                     }
                     Button {
                         showingSeizureSheet = true
                     } label: {
-                        Label("Add a seizure note", systemImage: "plus")
+                        Label("Add a note", systemImage: "plus")
                     }
                 }
+                .listRowBackground(Color.doseCard)
                 if !model.log.seizures.isEmpty {
-                    Section("Seizure notes") {
+                    Section("Notes") {
                         ForEach(model.log.seizures.sorted { $0.at > $1.at }) { s in
                             VStack(alignment: .leading) {
                                 Text(s.at.formatted(date: .abbreviated, time: .shortened))
@@ -28,6 +29,7 @@ struct HistoryView: View {
                             .swipeActions { Button("Delete", role: .destructive) { model.removeSeizure(s) } }
                         }
                     }
+                    .listRowBackground(Color.doseCard)
                 }
                 Section("Doses") {
                     if model.history.isEmpty {
@@ -37,7 +39,10 @@ struct HistoryView: View {
                         HistoryRow(occurrence: occ)
                     }
                 }
+                .listRowBackground(Color.doseCard)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.white)
             .navigationTitle("History")
             .sheet(isPresented: $showingSeizureSheet) { SeizureSheet() }
         }
@@ -52,7 +57,7 @@ struct HistoryRow: View {
         let status = model.status(occurrence)
         HStack {
             VStack(alignment: .leading) {
-                Text("\(occurrence.slot.title), \(occurrence.dueAt.formatted(date: .abbreviated, time: .omitted))")
+                Text("\(occurrence.title), \(occurrence.dueAt.formatted(date: .abbreviated, time: .omitted))")
                 Text(detail(status)).font(.subheadline).foregroundStyle(.secondary)
             }
             Spacer()
@@ -81,7 +86,7 @@ struct HistoryRow: View {
 
     private func color(_ s: DoseStatus) -> Color {
         switch s {
-        case .taken: return .green
+        case .taken: return .doseGreen
         case .takenLate: return .orange
         case .missed: return .red
         default: return .secondary
@@ -98,11 +103,14 @@ struct SeizureSheet: View {
         NavigationStack {
             Form {
                 Section("What happened (optional)") {
-                    TextField("For example: short, felt tired after", text: $note, axis: .vertical)
+                    TextField("For example: felt dizzy after", text: $note, axis: .vertical)
                 }
+                .listRowBackground(Color.doseCard)
                 Text("Saved with the current time.").font(.footnote).foregroundStyle(.secondary)
             }
-            .navigationTitle("Seizure note")
+            .scrollContentBackground(.hidden)
+            .background(Color.white)
+            .navigationTitle("Note")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

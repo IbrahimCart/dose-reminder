@@ -13,9 +13,16 @@ struct DoseCoreTests {
         cal.date(from: DateComponents(year: 2026, month: 11, day: d, hour: h, minute: m))!
     }
 
-    @Test func twoDosesPerDayTwelveHoursApart() {
+    /// The morning reminder of a default schedule.
+    var morningReminder: Reminder { Schedule().reminders[0] }
+
+    func occurrence(_ r: Reminder, _ dueAt: Date) -> Occurrence {
+        Occurrence(reminderID: r.id, title: r.title, dueAt: dueAt)
+    }
+
+    @Test func defaultsAreTwoDosesPerDayTwelveHoursApart() {
         let occ = Schedule().occurrences(on: date(2, 12), calendar: cal)
-        #expect(occ.map(\.slot) == [.morning, .evening])
+        #expect(occ.map(\.title) == ["Morning", "Evening"])
         #expect(occ[1].dueAt.timeIntervalSince(occ[0].dueAt) == 12 * 3600)
     }
 
@@ -70,7 +77,7 @@ struct DoseCoreTests {
         }
         let last = log.lastMissedOrLate(now: now, calendar: cal)
         #expect(last?.dueAt == date(2, 8))
-        log.markTaken(Occurrence(slot: .morning, dueAt: date(2, 8)), at: date(2, 8))
+        log.markTaken(occurrence(morningReminder, date(2, 8)), at: date(2, 8))
         #expect(log.lastMissedOrLate(now: now, calendar: cal)?.dueAt == date(1, 20))
     }
 
@@ -79,12 +86,70 @@ struct DoseCoreTests {
         let first = log.today(now: date(1, 9), calendar: cal)[0]
         log.markTaken(first, at: date(1, 8))
         var s = Schedule()
-        s.morning = DoseTime(hour: 9, minute: 0)
+        s.reminders[0].time = DoseTime(hour: 9, minute: 0)
         log.changeSchedule(s, now: date(2, 12))
         let history = log.history(now: date(2, 13), calendar: cal)
         #expect(history.contains { $0.dueAt == date(1, 8) })
         #expect(!(history.contains { $0.dueAt == date(1, 20) }))
     }
+
+    // MARK: Custom reminders
+
+    @Test func personCanAddRenameAndRemoveReminders() {
+        var s = Schedule()
+        s.reminders.append(Reminder(title: "Lunch", time: DoseTime(hour: 12, minute: 30)))
+        #expect(s.occurrences(on: date(2, 6), calendar: cal).map(\.title) == ["Morning", "Lunch", "Evening"])
+        s.reminders[2].title = "Midday"
+        s.reminders.removeAll { $0.title == "Evening" }
+        #expect(s.occurrences(on: date(2, 6), calendar: cal).map(\.title) == ["Morning", "Midday"])
+    }
+
+    @Test func disabledReminderHasNoDosesOrNotifications() {
+        var s = Schedule()
+        s.reminders[1].isEnabled = false
+        var log = DoseLog(trackingStart: date(2, 0))
+        log.changeSchedule(s, now: date(2, 0))
+        #expect(log.today(now: date(2, 7), calendar: cal).map(\.title) == ["Morning"])
+        let plan = ReminderPlanner.plan(log: log, now: date(2, 7), calendar: cal, days: 1)
+        #expect(plan.allSatisfy { $0.occurrence.title == "Morning" })
+    }
+
+    @Test func twoRemindersAtTheSameTimeAreTrackedSeparately() {
+        var s = Schedule()
+        s.reminders.append(Reminder(title: "Extra", time: s.reminders[0].time))
+        var log = DoseLog(trackingStart: date(2, 0))
+        log.changeSchedule(s, now: date(2, 0))
+        let both = log.today(now: date(2, 8), calendar: cal).filter { $0.dueAt == date(2, 8) }
+        #expect(both.count == 2)
+        log.markTaken(both[0], at: date(2, 8, 1))
+        #expect(log.status(of: both[0], now: date(2, 8, 5)) == .taken(at: date(2, 8, 1)))
+        #expect(log.status(of: both[1], now: date(2, 8, 5)) == .due)
+    }
+
+    @Test func renamingKeepsTrackingAndHistory() {
+        var log = DoseLog(trackingStart: date(1, 0))
+        let first = log.today(now: date(1, 9), calendar: cal)[0]
+        log.markTaken(first, at: date(1, 8))
+        var s = log.schedule
+        s.reminders[0].title = "Breakfast"
+        log.changeSchedule(s, now: date(2, 12))
+        let history = log.history(now: date(2, 13), calendar: cal)
+        #expect(history.contains { $0.dueAt == date(1, 20) }) // tracking was not restarted
+        #expect(history.filter { $0.dueAt == date(1, 8) }.count == 1) // not split into two rows
+    }
+
+    @Test func deletedReminderKeepsItsRecordedHistoryUnderTheOldLabel() {
+        var log = DoseLog(trackingStart: date(1, 0))
+        let first = log.today(now: date(1, 9), calendar: cal)[0]
+        log.markTaken(first, at: date(1, 8))
+        var s = log.schedule
+        s.reminders.removeAll { $0.id == first.reminderID }
+        log.changeSchedule(s, now: date(2, 12))
+        let row = log.history(now: date(2, 13), calendar: cal).first { $0.dueAt == date(1, 8) }
+        #expect(row?.title == "Morning")
+    }
+
+    // MARK: Reminders and storage
 
     @Test func reminderPlanIsGentleOnceThenFollowUpsUntilTaken() {
         var log = DoseLog(trackingStart: date(2, 0))
@@ -100,28 +165,40 @@ struct DoseCoreTests {
         #expect(!(after.isEmpty)) // evening still planned
     }
 
-    @Test func reminderPlanStaysUnderIOSLimit() {
-        let log = DoseLog(trackingStart: date(2, 0))
-        #expect(ReminderPlanner.plan(log: log, now: date(2, 7), calendar: cal).count < 64)
+    @Test func reminderPlanStaysUnderIOSLimitEvenWithTheMaximumReminders() {
+        var s = Schedule()
+        for i in 2..<Schedule.maxReminders {
+            s.reminders.append(Reminder(title: "Reminder \(i + 1)", time: DoseTime(hour: 6 + i, minute: 10)))
+        }
+        #expect(s.reminders.count == Schedule.maxReminders)
+        var log = DoseLog(trackingStart: date(2, 0))
+        log.changeSchedule(s, now: date(2, 0))
+        let plan = ReminderPlanner.plan(log: log, now: date(2, 5), calendar: cal)
+        #expect(plan.count == ReminderPlanner.maxPending)
+        #expect(Set(plan.map(\.id)).count == plan.count) // every notification id is unique
+        #expect(plan == plan.sorted { $0.fireAt < $1.fireAt }) // soonest are the ones kept
     }
 
-    @Test func reportIsTimesOnly() {
+    @Test func reportListsLabelsAndTimes() {
         var log = DoseLog(trackingStart: date(1, 0))
         let now = date(2, 12)
         let first = log.history(now: now, calendar: cal).last!
         log.markTaken(first, at: first.dueAt)
-        log.addSeizure(at: date(1, 15), note: "short, felt tired after")
+        log.addSeizure(at: date(1, 15), note: "felt dizzy after")
         let text = Report.text(log: log, now: now, calendar: cal)
         #expect(text.contains("On time: 1"))
+        #expect(text.contains("Morning: taken"))
         #expect(text.contains("MISSED"))
-        #expect(text.contains("short, felt tired after"))
+        #expect(text.contains("felt dizzy after"))
     }
 
-    @Test func storeRoundTrip() throws {
+    @Test func storeRoundTripKeepsCustomReminders() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("doses-\(UUID()).json")
         defer { try? FileManager.default.removeItem(at: url) }
-        var log = DoseLog(trackingStart: date(1, 0))
-        log.markTaken(Occurrence(slot: .morning, dueAt: date(1, 8)), at: date(1, 8, 2))
+        var s = Schedule()
+        s.reminders.append(Reminder(title: "Lunch", time: DoseTime(hour: 12, minute: 30)))
+        var log = DoseLog(schedule: s, trackingStart: date(1, 0))
+        log.markTaken(occurrence(morningReminder, date(1, 8)), at: date(1, 8, 2))
         let store = JSONFileStore(url: url)
         try store.save(log)
         #expect(store.load() == log)

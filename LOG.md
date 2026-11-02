@@ -55,9 +55,31 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **What it produced:** With Xcode 27.2 installed and its license accepted, it installed `xcodegen`, generated the Xcode project, and built the app for a real iPhone (no signing) and for the simulator. Both builds succeeded. The first build warned that the app did not declare iPad orientations, so it set the app to iPhone only. It also downloaded the iOS 27.2 simulator (8.3 GB).
 - **What I changed and why:** Starting the simulator used up almost all of my Mac's free space (it fell to under 500 MB), so I stopped it. I have therefore **not yet seen the app run**, and the README says so. I need to free more disk space before trying again.
 
+### Step 7: Run it on a real iPhone
+- **Date:** 2026-11-02
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** "Yes, run it", then "Real iPhone" after the simulator kept failing.
+- **What it produced:** The simulator booted but never finished its first start (its data migration stalled for over 7 minutes), so no simulator run was possible. We moved Xcode's simulator, build and iPhone-support files (about 8.5 GB) to an external USB flash drive, which freed my Mac's disk, and then built the app signed with my free Apple ID and installed it on my iPhone 17 Pro Max. A screenshot from the phone shows the Today screen with Morning 8:00 AM and Evening 8:00 PM.
+- **What I changed and why:** I did the parts only I could: trusting the Mac on the phone, turning on Developer Mode, signing in to Xcode, and trusting the developer profile. I did not change the app in this step. The free Apple ID install expires after 7 days, so it must be re-installed.
+
+### Step 8: Make it a general medication app
+- **Date:** 2026-11-02
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** "i want the app to be a general medication app that any person can customize what they want", then "option 2 sounds good" (generalize it now, not after the deadline).
+- **What it produced:** A fixed Morning/Evening schedule became a list of reminders the person can add, rename, retime, switch off or delete (up to 8, because iOS allows 64 pending notifications). A taken dose is now tied to its reminder as well as its time, so two reminders at the same time do not collide. Tests went from 12 to 17 and all pass; the app builds and installed on my phone. It also reworded "Seizure notes" to "Notes" and "for my neurologist" to "my record".
+- **What I changed and why:** I kept my mom's setup as the default so her version still works as before. Because a person can now type a label, I decided the app must never suggest one, I added a line in Settings that labels also show on the lock screen, and I updated the README and `CLAUDE.md` rules that said the app never stores a name. An older save file cannot be read by the new version, so it starts fresh (my phone had no real data). **Not yet tested by me on the phone:** the new Settings screens, whether reminders fire at the right times, and the notification's "I took it" button.
+
+### Step 9: Change how it looks and add confetti
+- **Date:** 2026-11-02
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** "i want the back ground to be White and the buttons that are blue right now to be green. When "i took it" is clicked i want it to throw confetti to reinforce a good job", then "i want the confetti to at least cover the full screen" and "i dont want it denser i just want it to cover whole screen".
+- **What it produced:** A white page with soft grey cards, one teal-green for the buttons, tabs, switches and "taken" text (dark enough for white button text), and confetti with a buzz when a dose is recorded. The app now stays in light mode. With Reduce Motion on, it only buzzes.
+- **What I changed and why:** The first confetti only covered the Today screen and many pieces fell too slowly to reach the bottom. The model asked to make it denser, but I only wanted it to cover the whole screen, so the amount went back to the original. It is now drawn over the whole app, including the tab bar. I have **not seen the confetti run myself**; I checked the colors on a screenshot from my phone.
+
 ## Next
 
-- Install Xcode, run the app in the simulator, fix whatever breaks, and add real screenshots.
+- Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.
+- Take clean screenshots without anything else on my phone's status bar.
 - Install it on her phone, watch her use it for a few minutes, and write down where she got stuck.
 - Hear back from my professor about working alone.
 - Write my reflection for the portfolio card.

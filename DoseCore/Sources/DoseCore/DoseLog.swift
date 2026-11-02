@@ -1,13 +1,16 @@
 import Foundation
 
 public struct TakenEntry: Codable, Equatable, Identifiable {
-    public var slot: DoseSlot
+    public var reminderID: UUID
+    /// The label when the dose was recorded, so history still reads right if the reminder is later renamed or deleted.
+    public var title: String
     public var dueAt: Date
     public var takenAt: Date
-    public var id: Date { dueAt }
+    public var id: String { "\(reminderID.uuidString)-\(Int(dueAt.timeIntervalSince1970))" }
 
-    public init(slot: DoseSlot, dueAt: Date, takenAt: Date) {
-        self.slot = slot
+    public init(reminderID: UUID, title: String, dueAt: Date, takenAt: Date) {
+        self.reminderID = reminderID
+        self.title = title
         self.dueAt = dueAt
         self.takenAt = takenAt
     }
@@ -36,7 +39,8 @@ public enum DoseStatus: Equatable {
     case missed
 }
 
-/// Everything the app remembers. It stores times only, never medication names.
+/// Everything the app remembers, kept on the device only: the reminders (with the labels the person
+/// typed), when each dose was taken, and any notes.
 public struct DoseLog: Codable, Equatable {
     public private(set) var schedule: Schedule
     /// Doses due before this are ignored, so installing the app never creates "missed" doses from the past.
@@ -51,9 +55,14 @@ public struct DoseLog: Codable, Equatable {
 
     // MARK: Status
 
+    /// The record of this dose being taken, if there is one.
+    public func entry(for occurrence: Occurrence) -> TakenEntry? {
+        taken.first { $0.reminderID == occurrence.reminderID && $0.dueAt == occurrence.dueAt }
+    }
+
     public func status(of occurrence: Occurrence, now: Date) -> DoseStatus {
         let grace = TimeInterval(schedule.graceMinutes * 60)
-        if let entry = taken.first(where: { $0.dueAt == occurrence.dueAt }) {
+        if let entry = entry(for: occurrence) {
             return entry.takenAt > occurrence.dueAt.addingTimeInterval(grace)
                 ? .takenLate(at: entry.takenAt) : .taken(at: entry.takenAt)
         }
@@ -63,27 +72,30 @@ public struct DoseLog: Codable, Equatable {
 
     /// The "I took it" button is available from `earlyMinutes` before the dose until it is recorded.
     public func canMarkTaken(_ occurrence: Occurrence, now: Date) -> Bool {
-        guard !taken.contains(where: { $0.dueAt == occurrence.dueAt }) else { return false }
+        guard entry(for: occurrence) == nil else { return false }
         return now >= occurrence.dueAt.addingTimeInterval(-TimeInterval(schedule.earlyMinutes * 60))
     }
 
     // MARK: Changes
 
     public mutating func markTaken(_ occurrence: Occurrence, at time: Date) {
-        taken.removeAll { $0.dueAt == occurrence.dueAt }
-        taken.append(TakenEntry(slot: occurrence.slot, dueAt: occurrence.dueAt, takenAt: time))
+        undoTaken(occurrence)
+        taken.append(TakenEntry(reminderID: occurrence.reminderID, title: occurrence.title,
+                                dueAt: occurrence.dueAt, takenAt: time))
     }
 
     /// For an accidental tap.
     public mutating func undoTaken(_ occurrence: Occurrence) {
-        taken.removeAll { $0.dueAt == occurrence.dueAt }
+        taken.removeAll { $0.reminderID == occurrence.reminderID && $0.dueAt == occurrence.dueAt }
     }
 
-    /// Changing times restarts tracking from `now`; earlier recorded doses stay in the history.
+    /// Changing times, adding or removing a reminder restarts tracking from `now`; earlier recorded doses
+    /// stay in the history. Only renaming a reminder keeps tracking as it was.
     public mutating func changeSchedule(_ newSchedule: Schedule, now: Date) {
         guard newSchedule != schedule else { return }
+        let onlyRenamed = newSchedule.differsOnlyInTitles(from: schedule)
         schedule = newSchedule
-        trackingStart = now
+        if !onlyRenamed { trackingStart = now }
     }
 
     public mutating func addSeizure(at time: Date, note: String) {
@@ -96,7 +108,7 @@ public struct DoseLog: Codable, Equatable {
 
     // MARK: Reading
 
-    /// Today's scheduled doses (both slots).
+    /// Today's scheduled doses from every enabled reminder.
     public func today(now: Date, calendar: Calendar) -> [Occurrence] {
         schedule.occurrences(on: now, calendar: calendar)
     }
@@ -105,9 +117,9 @@ public struct DoseLog: Codable, Equatable {
     public func history(now: Date, calendar: Calendar) -> [Occurrence] {
         var all = Set(schedule.occurrences(from: trackingStart, through: now, calendar: calendar))
         for entry in taken where entry.dueAt <= now {
-            all.insert(Occurrence(slot: entry.slot, dueAt: entry.dueAt))
+            all.insert(Occurrence(reminderID: entry.reminderID, title: entry.title, dueAt: entry.dueAt))
         }
-        return all.sorted { $0.dueAt > $1.dueAt }
+        return all.sorted { ($0.dueAt, $0.title) > ($1.dueAt, $1.title) }
     }
 
     /// The most recent dose that was missed or taken late.

@@ -33,15 +33,18 @@ enum NotificationScheduler {
         for reminder in plan {
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = categoryID
-            content.userInfo = ["dueAt": reminder.occurrence.dueAt.timeIntervalSince1970]
+            content.userInfo = [
+                "dueAt": reminder.occurrence.dueAt.timeIntervalSince1970,
+                "reminderID": reminder.occurrence.reminderID.uuidString,
+            ]
             content.sound = .default
             switch reminder.kind {
             case .gentle:
-                content.title = "\(reminder.occurrence.slot.title) dose"
-                content.body = "It's time for your \(reminder.occurrence.slot.title.lowercased()) dose."
+                content.title = reminder.occurrence.title
+                content.body = "It's time. Tap \"I took it\" when you have."
             case .followUp:
-                content.title = "Did you take your \(reminder.occurrence.slot.title.lowercased()) dose?"
-                content.body = "Tap to open the app and confirm."
+                content.title = reminder.occurrence.title
+                content.body = "Did you take it? Tap to open the app and confirm."
             }
             let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.fireAt)
             let trigger = UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
@@ -56,9 +59,12 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse) async {
+        let info = response.notification.request.content.userInfo
         guard response.actionIdentifier == NotificationScheduler.takenActionID,
-              let seconds = response.notification.request.content.userInfo["dueAt"] as? TimeInterval else { return }
-        await MainActor.run { model?.markTaken(dueAt: Date(timeIntervalSince1970: seconds)) }
+              let seconds = info["dueAt"] as? TimeInterval,
+              let idString = info["reminderID"] as? String,
+              let reminderID = UUID(uuidString: idString) else { return }
+        await MainActor.run { model?.markTaken(reminderID: reminderID, dueAt: Date(timeIntervalSince1970: seconds)) }
     }
 
     /// Show reminders even while the app is open.

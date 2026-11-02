@@ -14,6 +14,13 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(.orange.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
                 }
+                if model.today.isEmpty {
+                    Text("No reminders yet. Add one in Settings.")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                }
                 ForEach(model.today) { occ in
                     DoseCard(occurrence: occ)
                 }
@@ -21,6 +28,7 @@ struct HomeView: View {
             }
             .padding()
         }
+        .background(Color.white)
     }
 }
 
@@ -32,7 +40,7 @@ struct DoseCard: View {
         let status = model.status(occurrence)
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(occurrence.slot.title).font(.title.bold())
+                Text(occurrence.title).font(.title.bold())
                 Spacer()
                 Text(occurrence.dueAt, style: .time).font(.title2)
             }
@@ -47,6 +55,7 @@ struct DoseCard: View {
             default:
                 Button {
                     model.markTaken(occurrence)
+                    model.celebrate()
                 } label: {
                     Text(status == .missed ? "I took it late" : "I took it")
                         .font(.title2.bold())
@@ -57,7 +66,7 @@ struct DoseCard: View {
             }
         }
         .padding()
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 16))
+        .background(Color.doseCard, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func statusText(_ status: DoseStatus) -> String {
@@ -72,7 +81,7 @@ struct DoseCard: View {
 
     private func statusColor(_ status: DoseStatus) -> Color {
         switch status {
-        case .taken: return .green
+        case .taken: return .doseGreen
         case .takenLate: return .orange
         case .due, .missed: return .red
         case .upcoming: return .secondary
@@ -87,7 +96,7 @@ struct LastMissedView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Last missed or late dose").font(.headline)
             if let occ = model.lastMissedOrLate {
-                Text("\(occ.slot.title), \(occ.dueAt.formatted(date: .abbreviated, time: .shortened))")
+                Text("\(occ.title), \(occ.dueAt.formatted(date: .abbreviated, time: .shortened))")
                     .font(.title3)
             } else {
                 Text("None yet").font(.title3).foregroundStyle(.secondary)
@@ -95,6 +104,6 @@ struct LastMissedView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 16))
+        .background(Color.doseCard, in: RoundedRectangle(cornerRadius: 16))
     }
 }

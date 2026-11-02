@@ -1,7 +1,7 @@
 import Foundation
 
 public enum Report {
-    /// A plain-text summary she can show or send to her neurologist. Contains times only.
+    /// A plain-text summary the person can show or send to their doctor. Contains reminder labels and times.
     public static func text(log: DoseLog, now: Date, calendar: Calendar, days: Int = 30) -> String {
         let formatter = DateFormatter()
         formatter.calendar = calendar
@@ -18,13 +18,13 @@ public enum Report {
             switch log.status(of: occ, now: now) {
             case .taken(let at):
                 onTime += 1
-                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.slot.title): taken \(formatter.string(from: at))")
+                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.title): taken \(formatter.string(from: at))")
             case .takenLate(let at):
                 late += 1
-                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.slot.title): LATE, taken \(formatter.string(from: at))")
+                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.title): LATE, taken \(formatter.string(from: at))")
             case .missed:
                 missed += 1
-                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.slot.title): MISSED")
+                lines.append("\(formatter.string(from: occ.dueAt)) \(occ.title): MISSED")
             case .upcoming, .due:
                 break
             }
@@ -37,7 +37,7 @@ public enum Report {
         let seizures = log.seizures.filter { $0.at >= cutoff }.sorted { $0.at > $1.at }
         if !seizures.isEmpty {
             out.append("")
-            out.append("Seizure notes")
+            out.append("Notes")
             for s in seizures {
                 out.append("\(formatter.string(from: s.at))" + (s.note.isEmpty ? "" : ": \(s.note)"))
             }
