@@ -48,7 +48,7 @@ struct SettingsView: View {
                 Section {
                     Stepper("Repeat every \(model.log.schedule.followUpMinutes) minutes",
                             value: schedule(\.followUpMinutes), in: 5...30, step: 5)
-                    Stepper("Count as missed after \(model.log.schedule.graceMinutes / 60) hours",
+                    Stepper("Count as missed after \(graceHours) \(graceHours == 1 ? "hour" : "hours")",
                             value: hours, in: 1...4)
                 } header: {
                     Text("Repeats")
@@ -88,6 +88,8 @@ struct SettingsView: View {
             set: { var s = model.log.schedule; s[keyPath: keyPath] = $0; model.changeSchedule(s) }
         )
     }
+
+    private var graceHours: Int { model.log.schedule.graceMinutes / 60 }
 
     private var hours: Binding<Int> {
         Binding(
