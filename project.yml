@@ -1,0 +1,24 @@
+name: DoseReminder
+options:
+  bundleIdPrefix: com.ibrahimcart
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  DoseCore:
+    path: DoseCore
+targets:
+  DoseReminder:
+    type: application
+    platform: iOS
+    sources: [App]
+    dependencies:
+      - package: DoseCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ibrahimcart.dosereminder
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Doses
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
