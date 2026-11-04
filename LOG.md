@@ -76,6 +76,13 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **What it produced:** A white page with soft grey cards, one teal-green for the buttons, tabs, switches and "taken" text (dark enough for white button text), and confetti with a buzz when a dose is recorded. The app now stays in light mode. With Reduce Motion on, it only buzzes.
 - **What I changed and why:** The first confetti only covered the Today screen and many pieces fell too slowly to reach the bottom. The model asked to make it denser, but I only wanted it to cover the whole screen, so the amount went back to the original. It is now drawn over the whole app, including the tab bar. I have **not seen the confetti run myself**; I checked the colors on a screenshot from my phone.
 
+### Step 10: Type the missed-after time in hours and minutes
+- **Date:** 2026-11-04
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** For the web demo I asked for a small text box on "Count as missed after" where a person can type any number, keeping the up and down arrows, then "i would like a hour(s) and min(s) there". After the demo was live I said "Yes, add it" for the iPhone app.
+- **What it produced:** In the iPhone app's Settings, "Count as missed after" is now two boxes (hours and minutes) plus the arrows, which move 15 minutes at a time. The limits (1 minute to 24 hours, and 90 minutes turning into 1 hour 30) are in `DoseCore` with 3 new unit tests; all 20 pass. The same row exists in the web demo on my portfolio, which has its own copy of the logic and tests (14 pass).
+- **What I changed and why:** The old setting only allowed 1 to 4 whole hours. A typed time is applied when a box is left or Done is tapped, so the phone's notifications are not rescheduled on every digit. The app compiles with no warnings, but I have **not yet run this change on my phone** or tapped through the new boxes myself.
+
 ## Next
 
 - Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.

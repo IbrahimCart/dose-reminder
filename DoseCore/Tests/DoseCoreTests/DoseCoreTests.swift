@@ -149,6 +149,32 @@ struct DoseCoreTests {
         #expect(row?.title == "Morning")
     }
 
+    // MARK: Missed-after time
+
+    @Test func typedHoursAndMinutesBecomeOneLengthOfTime() {
+        #expect(Schedule.clampedGraceMinutes(hours: 1, minutes: 30) == 90)
+        #expect(Schedule.clampedGraceMinutes(hours: 0, minutes: 90) == 90) // 90 minutes is 1 hour 30
+        #expect(Schedule.clampedGraceMinutes(hours: 2, minutes: 0) == 120)
+        #expect(Schedule.clampedGraceMinutes(hours: 0, minutes: 5) == 5)
+    }
+
+    @Test func missedAfterTimeStaysBetweenOneMinuteAndTwentyFourHours() {
+        #expect(Schedule.clampedGraceMinutes(hours: 0, minutes: 0) == Schedule.minGraceMinutes)
+        #expect(Schedule.clampedGraceMinutes(hours: 99, minutes: 99) == Schedule.maxGraceMinutes)
+        #expect(Schedule.clampedGraceMinutes(-30) == Schedule.minGraceMinutes)
+        #expect(Schedule.clampedGraceMinutes(Schedule.maxGraceMinutes + Schedule.graceStepMinutes) == Schedule.maxGraceMinutes)
+    }
+
+    @Test func aShorterMissedAfterTimeMakesALaterDoseMissedSooner() {
+        var log = DoseLog(trackingStart: date(2, 0))
+        var s = log.schedule
+        s.graceMinutes = Schedule.clampedGraceMinutes(hours: 0, minutes: 30)
+        log.changeSchedule(s, now: date(2, 0))
+        let morning = log.today(now: date(2, 8, 45), calendar: cal)[0]
+        #expect(log.status(of: morning, now: date(2, 8, 45)) == .missed) // 30 minutes after 8:00 has passed
+        #expect(log.status(of: morning, now: date(2, 8, 20)) == .due)
+    }
+
     // MARK: Reminders and storage
 
     @Test func reminderPlanIsGentleOnceThenFollowUpsUntilTaken() {

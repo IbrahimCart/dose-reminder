@@ -21,7 +21,7 @@ On 2026-11-02 I made it general so anyone can use it: a person adds their own re
 
 ## How it is built
 
-- **`DoseCore/`**: a Swift package with all the logic and no screen code: the schedule, whether a dose is upcoming, due, taken, late or missed, the reminder plan, the plain-text summary and saving to a file. It has 17 unit tests (`cd DoseCore && swift test`).
+- **`DoseCore/`**: a Swift package with all the logic and no screen code: the schedule, whether a dose is upcoming, due, taken, late or missed, the reminder plan, the plain-text summary and saving to a file. It has 20 unit tests (`cd DoseCore && swift test`).
 - **`App/`**: the SwiftUI screens (Today, History, Settings, and a small editor for one reminder) and the notification code. Reminders are local notifications, so they work offline and without a server. A notification has an "I took it" button, so she can record a dose without opening the app.
 - **`project.yml`**: XcodeGen description of the Xcode project (`brew install xcodegen && xcodegen`).
 
@@ -55,11 +55,13 @@ Ibrahim only (I asked my professor whether this submission can be done alone; th
 
 In Settings a person can add a reminder (up to 8, because iOS keeps at most 64 pending notifications), rename it, change its time, switch it off, or swipe to delete it. Each reminder has its own card on Today and its own rows in History. Renaming a reminder keeps its history; deleting one keeps what was already recorded under its old name. Changing a time or adding or removing a reminder restarts "missed" tracking from that moment, so the app never invents missed doses from the past.
 
+Settings also sets how long after its time a dose counts as missed. It is typed as hours and minutes in two boxes (from 1 minute to 24 hours; 90 minutes becomes 1 hour 30 mins), or stepped with the arrows, 15 minutes at a time.
+
 An older save file (from before custom reminders) cannot be read, so the first launch after updating starts fresh.
 
 ## Status
 
-The logic is tested (17 unit tests pass) and the app builds with Xcode 27.2. On 2026-11-02 I installed it on my own iPhone 17 Pro Max and confirmed the Today screen shows the two default reminders. The iOS simulator never finished starting on my Mac, so there are no simulator runs.
+The logic is tested (20 unit tests pass) and the app builds with Xcode 27.2. On 2026-11-02 I installed it on my own iPhone 17 Pro Max and confirmed the Today screen shows the two default reminders. The iOS simulator never finished starting on my Mac, so there are no simulator runs.
 
 **Not yet verified on a device:** adding and editing reminders in Settings, whether notifications fire at the right times, and the "I took it" button on a notification. My mom has not used it yet.
 

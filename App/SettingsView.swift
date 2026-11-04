@@ -48,12 +48,11 @@ struct SettingsView: View {
                 Section {
                     Stepper("Repeat every \(model.log.schedule.followUpMinutes) minutes",
                             value: schedule(\.followUpMinutes), in: 5...30, step: 5)
-                    Stepper("Count as missed after \(graceHours) \(graceHours == 1 ? "hour" : "hours")",
-                            value: hours, in: 1...4)
+                    GraceTimeRow()
                 } header: {
                     Text("Repeats")
                 } footer: {
-                    Text("You get one gentle reminder at the set time. If you have not tapped \"I took it\", reminders repeat until you do.")
+                    Text("You get one gentle reminder at the set time. If you have not tapped \"I took it\", reminders repeat until you do. Type hours and minutes (from 1 minute to 24 hours) for when a dose counts as missed, or use the arrows, which move 15 minutes at a time.")
                 }
                 .listRowBackground(Color.doseCard)
                 Section {
@@ -89,13 +88,78 @@ struct SettingsView: View {
         )
     }
 
-    private var graceHours: Int { model.log.schedule.graceMinutes / 60 }
+}
 
-    private var hours: Binding<Int> {
-        Binding(
-            get: { model.log.schedule.graceMinutes / 60 },
-            set: { var s = model.log.schedule; s.graceMinutes = $0 * 60; model.changeSchedule(s) }
-        )
+/// "Count as missed after": hours and minutes typed in two boxes, or stepped with the arrows (15 minutes at a time).
+/// A typed time is applied when a box is left or Done is tapped, so typing does not reschedule on every digit.
+struct GraceTimeRow: View {
+    @EnvironmentObject var model: AppModel
+    @State private var hoursText = ""
+    @State private var minutesText = ""
+    @FocusState private var focus: Field?
+
+    private enum Field { case hours, minutes }
+
+    private var total: Int { model.log.schedule.graceMinutes }
+    private var hours: Int { total / 60 }
+    private var minutes: Int { total % 60 }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Count as missed after")
+                Spacer()
+                Stepper("Count as missed after",
+                        onIncrement: { model.setGraceMinutes(total + Schedule.graceStepMinutes) },
+                        onDecrement: { model.setGraceMinutes(total - Schedule.graceStepMinutes) })
+                    .labelsHidden()
+            }
+            HStack(spacing: 8) {
+                box($hoursText, field: .hours, label: "Hours")
+                Text(hours == 1 ? "hour" : "hours")
+                box($minutesText, field: .minutes, label: "Minutes").padding(.leading, 8)
+                Text(minutes == 1 ? "min" : "mins")
+            }
+        }
+        .onAppear(perform: load)
+        .onChange(of: total) { _, _ in load() }
+        .onChange(of: focus) { old, _ in if old != nil { apply() } }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { focus = nil }
+            }
+        }
+    }
+
+    private func box(_ text: Binding<String>, field: Field, label: String) -> some View {
+        TextField("0", text: text)
+            .keyboardType(.numberPad)
+            .multilineTextAlignment(.center)
+            .focused($focus, equals: field)
+            .frame(width: 56)
+            .padding(.vertical, 6)
+            .background(Color.white, in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
+            .accessibilityLabel(label)
+            .onChange(of: text.wrappedValue) { _, new in
+                let digits = String(new.filter(\.isNumber).prefix(2))
+                if digits != new { text.wrappedValue = digits }
+            }
+    }
+
+    private func load() {
+        hoursText = String(hours)
+        minutesText = String(minutes)
+    }
+
+    /// An empty pair of boxes puts the current time back; otherwise a missing box counts as 0.
+    private func apply() {
+        let h = Int(hoursText), m = Int(minutesText)
+        if h != nil || m != nil {
+            model.setGraceMinutes(Schedule.clampedGraceMinutes(hours: h ?? 0, minutes: m ?? 0))
+        }
+        load()
     }
 }
 

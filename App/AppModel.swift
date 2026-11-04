@@ -82,6 +82,13 @@ final class AppModel: ObservableObject {
         changeSchedule(schedule)
     }
 
+    /// How long after a dose is due it counts as missed, kept between 1 minute and 24 hours.
+    func setGraceMinutes(_ minutes: Int) {
+        var schedule = log.schedule
+        schedule.graceMinutes = Schedule.clampedGraceMinutes(minutes)
+        changeSchedule(schedule)
+    }
+
     func deleteReminder(id: UUID) {
         var schedule = log.schedule
         schedule.reminders.removeAll { $0.id == id }

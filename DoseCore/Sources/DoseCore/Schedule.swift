@@ -55,6 +55,22 @@ public struct Schedule: Codable, Equatable {
     /// iOS keeps at most 64 pending notifications, and every reminder needs several of them.
     public static let maxReminders = 8
 
+    /// How long after a dose is due it still counts as "on time" before it is "missed": between 1 minute and 24 hours.
+    public static let minGraceMinutes = 1
+    public static let maxGraceMinutes = 24 * 60
+    /// The Settings arrows move this many minutes at a time.
+    public static let graceStepMinutes = 15
+
+    /// Hours and minutes as typed (either may be empty or large) as one length of time, kept within the limits.
+    /// 90 minutes and 1 hour 30 minutes are the same, and 0 and 0 becomes the 1-minute minimum.
+    public static func clampedGraceMinutes(hours: Int, minutes: Int) -> Int {
+        clampedGraceMinutes(hours * 60 + minutes)
+    }
+
+    public static func clampedGraceMinutes(_ total: Int) -> Int {
+        min(maxGraceMinutes, max(minGraceMinutes, total))
+    }
+
     // Fixed ids so two untouched default schedules are equal.
     static let morningID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
     static let eveningID = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
