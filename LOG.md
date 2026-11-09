@@ -90,10 +90,14 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **What it produced:** The Undo control on a recorded dose is now a full-width outlined button reading "Tapped by mistake? Undo" with an arrow icon, in the iPhone app and in the web demo. The app compiles for the simulator; the demo change is a small style and text change.
 - **What I changed and why:** I installed the app on my mom's phone myself and watched her use it. She recorded a dose. Her one problem was after tapping "I took it" by accident: the small "Undo" text did not look tappable, so she did not know how to take it back and I had to point to it. That is a design problem, not hers, so I made it look like a button and say when to use it. **Not yet checked:** the new button on her phone or mine, and whether she finds it unaided next time.
 
+### Step 12: My reflection
+- **Date:** 2026-11-08
+- **Tool / model:** none; I wrote this myself, and Claude Code only copied it onto the card.
+- **Reflection:** When I handed Doses to my mom, I had to show her around the app and teach her how it works. She understood quickly at first, but about two days later I had to do another quick rundown. For example, she accidentally tapped the "I took it" button and could not see where to tap to undo it, so I showed her the red Undo button. This showed me that something that looks obvious to me is not obvious to others. Next time I would test everything with her at the beginning, instead of having her come to me later with a problem.
+
 ## Next
 
 - Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.
 - Take clean screenshots without anything else on my phone's status bar.
 - Put the Undo button change on her phone and see whether she finds it without help.
 - Hear back from my professor about working alone.
-- Write my reflection for the portfolio card.
