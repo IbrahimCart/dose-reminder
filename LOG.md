@@ -93,7 +93,7 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 ### Step 12: My reflection
 - **Date:** 2026-11-08
 - **Tool / model:** none; I wrote this myself, and Claude Code only copied it onto the card.
-- **Reflection:** When I handed Doses to my mom, I had to show her around the app and teach her how it works. She understood quickly at first, but about two days later I had to do another quick rundown. For example, she accidentally tapped the "I took it" button and could not see where to tap to undo it, so I showed her the red Undo button. This showed me that something that looks obvious to me is not obvious to others. Next time I would test everything with her at the beginning, instead of having her come to me later with a problem.
+- **Reflection:** When I handed Doses to my mom, I had to show her around the app and teach her how it works. She understood quickly at first, but about two days later I had to do another quick rundown. For example, she accidentally tapped the "I took it" button and could not see how to undo it, because the small red Undo text did not look like a button, so I showed her where it was. I then changed it into a full-width button that says "Tapped by mistake? Undo". This showed me that something that looks obvious to me is not obvious to others. Next time I would test with her from the beginning: show her each screen and ask her to do one task without help, instead of having her come to me later with a problem. Claude built the app fast, but only watching her use it showed me what was wrong.
 
 ## Next
 
