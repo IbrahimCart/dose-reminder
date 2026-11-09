@@ -4,7 +4,7 @@ Plan for Artifact 4 (TCSS 490): a customizable dose reminder, built first for my
 
 ## The plan in short
 
-- **What:** a dose reminder for an iPhone that anyone can customize (add, rename, retime, switch off or delete reminders, up to 8). It starts with my mom's setup, 8 am and 8 pm: one gentle reminder, then repeats until she taps "I took it"; shows the last missed or late dose; a history she can share with her neurologist. Details and her own answers are in `README.md` and `LOG.md`.
+- **What:** a dose reminder for an iPhone that anyone can customize (add, rename, retime, switch off or delete reminders, up to 8). It starts with my mom's setup, 8 am and 8 pm: one gentle reminder, then repeats until she taps "I took it"; shows the last missed or late dose; a history she can share with her doctor. Details and her own answers are in `README.md` and `LOG.md`.
 - **Who owns what:** Ibrahim owns everything for now. With a partner: one owns `DoseCore/`, the other `App/`; each works on their own branch and merges by pull request into `main`.
 - **Done means:** it runs on her phone, she has used it, and I have logged where she got stuck.
 

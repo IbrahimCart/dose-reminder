@@ -14,7 +14,7 @@ On 2026-11-02 I made it general so anyone can use it: a person adds their own re
 | Forgets when busy; can't tell if she already took it | The Today screen says "Taken at 8:04" or "Not yet" in large text |
 | Wants one gentle reminder, then something firmer if she misses it | One reminder at dose time; if she has not tapped "I took it", reminders repeat until she does |
 | Wants to see the last time she missed a dose | "Last missed or late dose" is on the home screen |
-| Wants a record for her neurologist | History list and a share button that makes a plain-text summary (and an optional notes list) |
+| Wants a record to show her doctor | History list and a share button that makes a plain-text summary (and an optional notes list) |
 | Only on her phone, nobody else told | No accounts, no server; data is a file on the phone |
 | Does not want her medications named | The app never asks for a medication name or suggests one. Each reminder has a label the person types ("Morning" and "Evening" by default), kept only on the phone |
 | Health app is confusing; wants it straightforward | Three tabs, big buttons, a short Settings list |
