@@ -95,9 +95,15 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **Tool / model:** none; I wrote this myself, and Claude Code only copied it onto the card.
 - **Reflection:** When I handed Doses to my mom, I had to show her around the app and teach her how it works. She understood quickly at first, but about two days later I had to do another quick rundown. For example, she accidentally tapped the "I took it" button and could not see how to undo it, because the small red Undo text did not look like a button, so I showed her where it was. I then changed it into a full-width button that says "Tapped by mistake? Undo". This showed me that something that looks obvious to me is not obvious to others. Next time I would test with her from the beginning: show her each screen and ask her to do one task without help, instead of having her come to me later with a problem. Claude built the app fast, but only watching her use it showed me what was wrong.
 
+### Step 13: What my mom said after using it
+- **Date:** 2026-11-08
+- **Tool / model:** none; this is what she told me, written down by Claude Code from my words.
+- **What she said:** The app helped her keep track of her doses, and the reminders came at the right times.
+- **What I changed and why:** Nothing yet. This is the first check of the part I had not verified, whether reminders fire at the right times, and it comes from her real use on her own phone, not from a test I ran. I did not time it myself. The new Undo button is still not on her phone.
+
 ## Next
 
-- Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.
+- Try the new Settings screens on my phone (add, rename, retime, delete a reminder) and fix what breaks. (Reminders firing on time: confirmed by my mom, Step 13.)
 - Take clean screenshots without anything else on my phone's status bar.
 - Put the Undo button change on her phone and see whether she finds it without help.
 - Hear back from my professor about working alone (I could not find a partner; no reply as of Nov 8).

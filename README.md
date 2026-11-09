@@ -63,7 +63,7 @@ An older save file (from before custom reminders) cannot be read, so the first l
 
 The logic is tested (20 unit tests pass) and the app builds with Xcode 27.2. On 2026-11-02 I installed it on my own iPhone 17 Pro Max and confirmed the Today screen shows the two default reminders. The iOS simulator never finished starting on my Mac, so there are no simulator runs.
 
-**Not yet verified on a device:** adding and editing reminders in Settings, whether notifications fire at the right times, and the "I took it" button on a notification. My mom has not used it yet.
+**Used by my mom:** she used it on her own phone and told me it helped her keep track of her doses and that the reminders came at the right times (LOG Step 13). I did not time the reminders myself. **Not yet verified by me:** adding and editing reminders in Settings on a device, and the "I took it" button on a notification.
 
 ## Running it
 
