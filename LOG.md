@@ -83,10 +83,17 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - **What it produced:** In the iPhone app's Settings, "Count as missed after" is now two boxes (hours and minutes) plus the arrows, which move 15 minutes at a time. The limits (1 minute to 24 hours, and 90 minutes turning into 1 hour 30) are in `DoseCore` with 3 new unit tests; all 20 pass. The same row exists in the web demo on my portfolio, which has its own copy of the logic and tests (14 pass).
 - **What I changed and why:** The old setting only allowed 1 to 4 whole hours. A typed time is applied when a box is left or Done is tapped, so the phone's notifications are not rescheduled on every digit. The app compiles with no warnings, but I have **not yet run this change on my phone** or tapped through the new boxes myself.
 
+### Step 11: Handover to my mom, and the Undo button
+- **Date:** 2026-11-08
+- **Tool / model:** Claude Code (Claude Sonnet 5.5)
+- **Prompt:** I told Claude what I saw: "She definitely did use it. She got stuck on whenever she accidentally clicked I took it on the app. The undo button didn't look like a button, it just looked like text. So she kind of got lost on when to undo a thing, so I had to direct her."
+- **What it produced:** The Undo control on a recorded dose is now a full-width outlined button reading "Tapped by mistake? Undo" with an arrow icon, in the iPhone app and in the web demo. The app compiles for the simulator; the demo change is a small style and text change.
+- **What I changed and why:** I installed the app on my mom's phone myself and watched her use it. She recorded a dose. Her one problem was after tapping "I took it" by accident: the small "Undo" text did not look tappable, so she did not know how to take it back and I had to point to it. That is a design problem, not hers, so I made it look like a button and say when to use it. **Not yet checked:** the new button on her phone or mine, and whether she finds it unaided next time.
+
 ## Next
 
 - Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.
 - Take clean screenshots without anything else on my phone's status bar.
-- Install it on her phone, watch her use it for a few minutes, and write down where she got stuck.
+- Put the Undo button change on her phone and see whether she finds it without help.
 - Hear back from my professor about working alone.
 - Write my reflection for the portfolio card.

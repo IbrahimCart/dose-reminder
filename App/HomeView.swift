@@ -50,8 +50,12 @@ struct DoseCard: View {
 
             switch status {
             case .taken, .takenLate:
-                Button("Undo", role: .destructive) { model.undoTaken(occurrence) }
-                    .font(.body)
+                Button(role: .destructive) { model.undoTaken(occurrence) } label: {
+                    Label("Tapped by mistake? Undo", systemImage: "arrow.uturn.backward")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                }
+                .buttonStyle(.bordered)
             default:
                 Button {
                     model.markTaken(occurrence)

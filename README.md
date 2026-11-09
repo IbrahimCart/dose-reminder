@@ -47,8 +47,8 @@ Ibrahim only (I asked my professor whether this submission can be done alone; th
 
 ## Definition of done
 
-1. The app runs on her iPhone and she has used it to record real doses. *Not done yet.*
-2. I watched her use it and wrote down where she got stuck and what I changed. *Not done yet.*
+1. The app runs on her iPhone and she has used it to record real doses. *Done: installed on her phone and she used it.*
+2. I watched her use it and wrote down where she got stuck and what I changed. *Done: she got stuck undoing an accidental tap because Undo looked like plain text; it is now a button (LOG Step 11).*
 3. `LOG.md` is current and my portfolio card links here with a reflection. *In progress.*
 
 ## Customizing reminders
