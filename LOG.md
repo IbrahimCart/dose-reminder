@@ -100,4 +100,4 @@ A running log of what I planned and what changed for TCSS 490 Artifact 4, and th
 - Try the new Settings screens on my phone (add, rename, retime, delete a reminder), fix what breaks, and check a real reminder fires.
 - Take clean screenshots without anything else on my phone's status bar.
 - Put the Undo button change on her phone and see whether she finds it without help.
-- Hear back from my professor about working alone.
+- Hear back from my professor about working alone (I could not find a partner; no reply as of Nov 8).

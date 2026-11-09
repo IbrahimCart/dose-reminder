@@ -36,7 +36,7 @@ On 2026-11-02 I made it general so anyone can use it: a person adds their own re
 
 ## Team and ownership
 
-Ibrahim only (I asked my professor whether this submission can be done alone; the answer is recorded in `LOG.md`). The person I built it for is my mom, who is outside the team. The earlier attempt for another group (a Discord bot pull request) is in [`IbrahimCart/artifact-4-discord-bot-pr`](https://github.com/IbrahimCart/artifact-4-discord-bot-pr).
+Ibrahim only. I could not find a partner, and as of Nov 8 my professor has not replied to my question about working alone (if he does, the answer goes in `LOG.md`). The plan below, and the team rules in `CLAUDE.md`, still say how a partner would split the work with me. The person I built it for is my mom, who is outside the team. The earlier attempt for another group (a Discord bot pull request) is in [`IbrahimCart/artifact-4-discord-bot-pr`](https://github.com/IbrahimCart/artifact-4-discord-bot-pr).
 
 ## How collisions are avoided
 
